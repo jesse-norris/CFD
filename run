@@ -8,9 +8,9 @@ import argparse
 
 # get command line values 
 parser = argparse.ArgumentParser(description='run interFoam in parallel')
-parser.add_argument('Nx', default=1, help='number of cells in x')
-parser.add_argument('Ny', default=1, help='number of cells in y')
-parser.add_argument('Nz', default=1, help='number of cells in z')
+parser.add_argument('Nx', default=1, help='number of processors in x')
+parser.add_argument('Ny', default=1, help='number of processors in y')
+parser.add_argument('Nz', default=1, help='number of processors in z')
 args = parser.parse_args()
 
 Nx = int(args.Nx) 
