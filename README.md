@@ -1,7 +1,7 @@
 # CFD
 NUEN 489 GEMIX Project
 
-# 3D version of master branch 
+## 3D version of master branch 
 
 ## run 
 Python script to run interFoam in parallel with 4 cores. 
