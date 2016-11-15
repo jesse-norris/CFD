@@ -1,10 +1,48 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import Timer 
 import os
 import sys 
 
-tt = Timer.timer() 
+import argparse 
+
+# get command line values 
+parser = argparse.ArgumentParser(description='run interFoam in parallel')
+parser.add_argument('Nx', default=1, help='number of cells in x')
+parser.add_argument('Ny', default=1, help='number of cells in y')
+parser.add_argument('Nz', default=1, help='number of cells in z')
+args = parser.parse_args()
+
+Nx = int(args.Nx) 
+Ny = int(args.Ny) 
+Nz = int(args.Nz) 
+
+N = Nx * Ny * Nz # total number of cells 
+
+# write decomposeParDict 
+decompName = 'system/decomposeParDict'
+# read in current file 
+f = open(decompName, 'r')
+string = '' 
+for line in f:
+	# change number of subdomains 
+	if (line.startswith('numberOfSubdomains')):
+		string += 'numberOfSubdomains ' + str(N) + ';\n'
+
+	# change Nx Ny Nz 
+	elif ('n (' in line):
+		string += '    n (' + str(Nx) + ' ' + str(Ny) + ' ' + str(Nz) + '); \n'
+
+	# copy everything else 
+	else:
+		string += line 
+
+f.close()
+
+# write changes to file 
+out = open(decompName, 'w')
+out.write(string)
+out.close()
 
 def runcmd(cmd):
 	''' run command cmd and exit if errors ''' 
@@ -12,17 +50,26 @@ def runcmd(cmd):
 	if (x != 0):
 		sys.exit()
 
+tt = Timer.timer() # start timer 
+
 runcmd('foamListTimes -rm') # delete previous time steps 
+
 if (os.path.isfile('0/yPlus')): # remove previous yPlus 
 	runcmd('rm 0/yPlus')
+
 runcmd('blockMesh') # generate mesh 
-runcmd('decomposePar -force') # decompose for parallel run 
+
+# decompose for parallel run, -force overwrite current directories 
+runcmd('decomposePar -force') 
+
 # run pipe into log 
-runcmd('mpirun -np 4 interFoam -parallel | tee log')
+runcmd('mpirun -np ' + str(N) + ' interFoam -parallel | tee log')
+
 runcmd('reconstructPar') # reconstruct parallel folders 
+
 runcmd('interFoam -postProcess -func yPlus') # generate yPlus 
 
-time, str = tt.stop()
+time, str = tt.stop() # end timer 
 
 # make notification if wall time is longer than a minute 
 if (time > 60):
