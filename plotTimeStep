@@ -61,7 +61,7 @@ try:
 				run = 0
 
 		plt.semilogy(t, val)
-		plt.title('{:.6e}'.format(float(val[-1])) + ' ' + str(t[-1]))
+		plt.title(str(t[-1]))
 		f.close()
 
 		# plt.legend(loc='best', frameon=False)
