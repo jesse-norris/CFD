@@ -9,6 +9,7 @@ Has command line options for
 * number of volumes (split into x_inlet, x_mixing, y and z) 
 * turbulence model (k-Epsilon or k-Omega) 
 * switch for running in 3D 
+
 See ./run -h for help. 
 
 ## kEpsilon/kOmega
@@ -18,7 +19,7 @@ Contains fvSchemes, fvSolution, turbulenceProperties files corresponding to k-Ep
 ## mesh
 Location of blockMeshDict. Top is the top half of the blockMeshDict that is common to both 3D and 2D runs. 2D and 3D change the boundary conditions to be appropriate for 2 and 3 D geometry. simple is the blockMeshDict for 3D geometry without angled inlets. 
 
-./run alters local variables Nx1, Nx2, Ny, Nz which control the number of volumes used. 
+./run alters local variables Nx1, Nx2, Ny, Nz which control the number of volumes used, concatenates top and 2D/3D and writes to system/blockMeshDict.  
 
 ## plotTime.py
 Plots the time step output to make sure the adjustable time step isn't going too small. 
@@ -32,4 +33,4 @@ Reads in a CSV file of the axial pressure to calculate the fRe product.
 * boundary conditions for k 
 * inlet conditions from data 
 * top and bottom inlets not mixing 
-* flow is currently not turbulent 
+* flow is currently not turbulent (Re ~ 50 for 1 m/s velocity and average viscosity) 
